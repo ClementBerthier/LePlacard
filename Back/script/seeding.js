@@ -118,7 +118,7 @@ async function importFigurines() {
     }
 }
 
-// import Data in datadase
+// import Data in datadase.
 
 async function importData() {
     await importUser();
