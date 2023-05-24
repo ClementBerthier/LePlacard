@@ -1,0 +1,10 @@
+[
+    {
+        "name": "game1",
+        "picture_path": "../data/images/game1.png"
+    },
+    {
+        "name": "game2",
+        "picture_path": "../data/images/game2.png"
+    }
+]

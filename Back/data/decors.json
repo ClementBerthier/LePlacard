@@ -1,0 +1,38 @@
+[
+    {
+        "name": "decors1",
+        "picture_path": "../data/images/decors1.png",
+        "purchase": 2,
+        "cleanMount": 1,
+        "undercoat": 0,
+        "paint": 0,
+        "plinth": 0,
+        "varnish": 0,
+        "box_name": "box1",
+        "user_name": "DDTeam"
+    },
+    {
+        "name": "decors2",
+        "picture_path": "../data/images/decors2.png",
+        "purchase": 2,
+        "cleanMount": 2,
+        "undercoat": 1,
+        "paint": 0,
+        "plinth": 0,
+        "varnish": 0,
+        "box_name": "box1",
+        "user_name": "DDTeam"
+    },
+    {
+        "name": "decors3",
+        "picture_path": "../data/images/decors3.png",
+        "purchase": 2,
+        "cleanMount": 2,
+        "undercoat": 2,
+        "paint": 1,
+        "plinth": 0,
+        "varnish": 0,
+        "box_name": "box2",
+        "user_name": "DDTeam"
+    }
+]

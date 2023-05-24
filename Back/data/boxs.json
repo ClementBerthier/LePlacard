@@ -1,0 +1,12 @@
+[
+    {
+        "name": "box1",
+        "picture_path": "../data/images/box1.png",
+        "game_name": "game1"
+    },
+    {
+        "name": "box2",
+        "picture_path": "../data/images/box2.png",
+        "game_name": "game2"
+    }
+]
