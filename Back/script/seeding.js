@@ -11,6 +11,14 @@ const { Client } = require("pg");
 const client = new Client();
 client.connect();
 
+// Delete all data in database
+
+async function deleteData() {
+    await client.query(
+        'TRUNCATE "user", games, boxs, armies, decors, figurines RESTART IDENTITY CASCADE;'
+    );
+}
+
 // 1. register user
 
 async function importUser() {
@@ -121,6 +129,7 @@ async function importFigurines() {
 // import Data in datadase.
 
 async function importData() {
+    await deleteData();
     await importUser();
     await importGames();
     await importBoxs();
