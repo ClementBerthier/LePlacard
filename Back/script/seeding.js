@@ -15,7 +15,7 @@ client.connect();
 
 async function deleteData() {
     await client.query(
-        'TRUNCATE "user", games, boxs, armies, decors, figurines RESTART IDENTITY CASCADE;'
+        'TRUNCATE "user", armies_boxs, armies_games, games, boxs, armies, decors, figurines RESTART IDENTITY CASCADE;'
     );
     console.log("Data successfully deleted");
 }
@@ -162,12 +162,12 @@ async function importFigurines() {
 
 async function importData() {
     await deleteData();
-    await importUser();
+    /* await importUser();
     await importGames();
     await importBoxs();
     await importArmies();
     await importDecors();
-    await importFigurines();
+    await importFigurines(); */
 }
 
 importData();
