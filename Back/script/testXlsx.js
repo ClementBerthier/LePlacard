@@ -15,8 +15,6 @@ const worksheet = workbook.Sheets[sheetName];
 
 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-//console.log(jsonData);
-
 // Delete all data in database
 
 async function deleteData() {
@@ -70,7 +68,6 @@ const excludedValuesGames = "Jeu";
 const gamesList = gamesFilter.filter(
     (item) => !excludedValuesGames.includes(item)
 );
-
 // Add games to database
 
 async function importGames() {
@@ -110,8 +107,6 @@ for (const box of boxesFilter) {
     box[1] = gamesList.indexOf(box[1]) + 1;
 }
 
-console.log(boxesFilter);
-
 // Add boxes to database
 
 async function importBoxes() {
@@ -132,11 +127,57 @@ async function importBoxes() {
     console.log(`nb of boxes imported : ${counter}`);
 }
 
+// Filter armies_games ans add to database
+
+//Filter armies_games
+
+const armiesWithGames = armiesData.map((item, index) => [
+    item,
+    gamesData[index],
+]);
+
+armiesWithGames.shift();
+
+const armiesWithGamesFilter = armiesWithGames.filter(
+    (value, index, self) =>
+        self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
+);
+
+const excludedValuesArmiesWithGames = ["Décors", "Objets"];
+
+const armiesWithGamesList = armiesWithGamesFilter.filter(
+    (item) => !excludedValuesArmiesWithGames.includes(item[0])
+);
+
+for (const item of armiesWithGamesList) {
+    item[0] = armiesList.indexOf(item[0]) + 1;
+    item[1] = gamesList.indexOf(item[1]) + 1;
+}
+
+// Add armies_games to database
+
+async function importArmiesGames() {
+    let counter = 0;
+
+    for (const item of armiesWithGamesList) {
+        const sqlQuery = `
+        INSERT INTO public.armies_games
+        (army_id, game_id)
+        VALUES
+        ($1, $2);`;
+
+        await client.query(sqlQuery, [item[0], item[1]]);
+        counter++;
+    }
+    console.log(`nb of armies_games imported : ${counter}`);
+}
+
 async function importData() {
     await deleteData();
     await importArmies();
     await importGames();
     await importBoxes();
+    await importArmiesGames();
 }
 
 importData();
