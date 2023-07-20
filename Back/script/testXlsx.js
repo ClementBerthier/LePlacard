@@ -93,17 +93,18 @@ async function importGames() {
 //Filter boxes
 
 const boxesData = jsonData.map((item) => item[2]);
+const boxesFilter = [...new Set(boxesData)];
 
 const boxesWithGames = boxesData.map((item, index) => [item, gamesData[index]]);
 
 boxesWithGames.shift();
 
-const boxesFilter = boxesWithGames.filter(
+const boxesList = boxesWithGames.filter(
     (value, index, self) =>
         self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
 );
 
-for (const box of boxesFilter) {
+for (const box of boxesList) {
     box[1] = gamesList.indexOf(box[1]) + 1;
 }
 
@@ -112,7 +113,7 @@ for (const box of boxesFilter) {
 async function importBoxes() {
     let counter = 0;
 
-    for (const box of boxesFilter) {
+    for (const box of boxesList) {
         const sqlQuery = `
         INSERT INTO public.boxes
         (box_name, picture_path, game_id)
@@ -172,12 +173,60 @@ async function importArmiesGames() {
     console.log(`nb of armies_games imported : ${counter}`);
 }
 
+// Filter armies_boxes ans add to database
+
+//Filter armies_boxes
+
+const armiesWithBoxes = armiesData.map((item, index) => [
+    item,
+    boxesData[index],
+]);
+
+armiesWithBoxes.shift();
+
+const armiesWithBoxesFilter = armiesWithBoxes.filter(
+    (value, index, self) =>
+        self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
+);
+
+const excludedValuesArmiesWithBoxes = ["Décors", "Objets"];
+
+const armiesWithBoxesList = armiesWithBoxesFilter.filter(
+    (item) => !excludedValuesArmiesWithBoxes.includes(item[0])
+);
+
+for (const item of armiesWithBoxesList) {
+    item[0] = armiesList.indexOf(item[0]) + 1;
+    item[1] = boxesFilter.indexOf(item[1]);
+}
+
+console.log(armiesWithBoxesList);
+
+// Add armies_boxes to database
+
+async function importArmiesBoxes() {
+    let counter = 0;
+
+    for (const item of armiesWithBoxesList) {
+        const sqlQuery = `
+        INSERT INTO public.armies_boxes
+        (army_id, box_id)
+        VALUES
+        ($1, $2);`;
+
+        await client.query(sqlQuery, [item[0], item[1]]);
+        counter++;
+    }
+    console.log(`nb of armies_boxes imported : ${counter}`);
+}
+
 async function importData() {
     await deleteData();
     await importArmies();
     await importGames();
     await importBoxes();
     await importArmiesGames();
+    await importArmiesBoxes();
 }
 
 importData();
