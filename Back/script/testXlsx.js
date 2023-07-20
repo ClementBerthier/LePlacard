@@ -18,6 +18,7 @@ const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 //console.log(jsonData);
 
 // Delete all data in database
+
 async function deleteData() {
     await client.query(
         'TRUNCATE "user", armies_boxes, armies_games, games, boxes, armies, decors, figurines, decors RESTART IDENTITY CASCADE;'
@@ -26,6 +27,7 @@ async function deleteData() {
 }
 
 // Filter armies and add to database
+
 //Filter armies
 const armiesData = jsonData.map((item) => item[1]);
 const armiesFilter = [...new Set(armiesData)];
@@ -57,7 +59,9 @@ async function importArmies() {
 }
 
 // Filter games and add to database
+
 //Filter games
+
 const gamesData = jsonData.map((item) => item[3]);
 const gamesFilter = [...new Set(gamesData)];
 
@@ -87,10 +91,52 @@ async function importGames() {
     console.log(`nb of games imported : ${counter}`);
 }
 
+// Filter boxes and add to database
+
+//Filter boxes
+
+const boxesData = jsonData.map((item) => item[2]);
+
+const boxesWithGames = boxesData.map((item, index) => [item, gamesData[index]]);
+
+boxesWithGames.shift();
+
+const boxesFilter = boxesWithGames.filter(
+    (value, index, self) =>
+        self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
+);
+
+for (const box of boxesFilter) {
+    box[1] = gamesList.indexOf(box[1]) + 1;
+}
+
+console.log(boxesFilter);
+
+// Add boxes to database
+
+async function importBoxes() {
+    let counter = 0;
+
+    for (const box of boxesFilter) {
+        const sqlQuery = `
+        INSERT INTO public.boxes
+        (box_name, picture_path, game_id)
+        VALUES
+        ($1, 'unknown', $2)
+        RETURNING id;`;
+
+        const result = await client.query(sqlQuery, [box[0], box[1]]);
+        box.id = result.rows[0].id;
+        counter++;
+    }
+    console.log(`nb of boxes imported : ${counter}`);
+}
+
 async function importData() {
     await deleteData();
     await importArmies();
     await importGames();
+    await importBoxes();
 }
 
 importData();
