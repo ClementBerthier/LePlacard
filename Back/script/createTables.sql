@@ -16,14 +16,14 @@ CREATE TABLE IF NOT EXISTS public."user"
     CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS public.boxs
+CREATE TABLE IF NOT EXISTS public.boxes
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ,
     box_name text  NOT NULL,
     picture_path text,
     game_id integer NOT NULL,
-    CONSTRAINT boxs_pkey PRIMARY KEY (id),
-    CONSTRAINT boxs_game_id_fkey FOREIGN KEY (game_id)
+    CONSTRAINT boxes_pkey PRIMARY KEY (id),
+    CONSTRAINT boxes_game_id_fkey FOREIGN KEY (game_id)
         REFERENCES public.games (id) 
   
 );
@@ -36,14 +36,14 @@ CREATE TABLE IF NOT EXISTS public.armies
     CONSTRAINT armies_pkey PRIMARY KEY (id)    
 );
 
-CREATE TABLE IF NOT EXISTS public.armies_boxs
+CREATE TABLE IF NOT EXISTS public.armies_boxes
 ( army_id integer NOT NULL,
   box_id integer NOT NULL,
-  CONSTRAINT armies_boxs_pkey PRIMARY KEY (army_id, box_id),
-  CONSTRAINT armies_boxs_army_id_fkey FOREIGN KEY (army_id)
+  CONSTRAINT armies_boxes_pkey PRIMARY KEY (army_id, box_id),
+  CONSTRAINT armies_boxes_army_id_fkey FOREIGN KEY (army_id)
         REFERENCES public.armies (id) ON DELETE CASCADE,
-  CONSTRAINT armies_boxs_box_id_fkey FOREIGN KEY (box_id)
-        REFERENCES public.boxs (id) ON DELETE CASCADE        
+  CONSTRAINT armies_boxes_box_id_fkey FOREIGN KEY (box_id)
+        REFERENCES public.boxes (id) ON DELETE CASCADE        
 );
 
 CREATE TABLE IF NOT EXISTS public.armies_games
@@ -70,13 +70,15 @@ CREATE TABLE IF NOT EXISTS public.decors
     paint integer NOT NULL DEFAULT 0,
     plinth integer NOT NULL DEFAULT 0,
     varnish integer NOT NULL DEFAULT 0,
-    box_name text NOT NULL,
-    user_name text NOT NULL,
     box_id integer NOT NULL,
+    game_id integer NOT NULL,
     user_id integer NOT NULL,
     CONSTRAINT decors_pkey PRIMARY KEY (id),
     CONSTRAINT decors_box_id_fkey FOREIGN KEY (box_id)
-        REFERENCES public.boxs (id)
+        REFERENCES public.boxes (id)
+        ON DELETE CASCADE,
+    CONSTRAINT decors_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES public.games (id)
         ON DELETE CASCADE,
     CONSTRAINT decors_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES public."user" (id)
@@ -95,15 +97,47 @@ CREATE TABLE IF NOT EXISTS public.figurines
     paint integer NOT NULL DEFAULT 0,
     plinth integer NOT NULL DEFAULT 0,
     varnish integer NOT NULL DEFAULT 0,
-    army_name text NOT NULL,
-    user_name text NOT NULL,
     army_id integer NOT NULL,
+    box_id integer NOT NULL,
+    game_id integer NOT NULL,
     user_id integer NOT NULL,
     CONSTRAINT figurines_pkey PRIMARY KEY (id),
     CONSTRAINT figurines_army_id_fkey FOREIGN KEY (army_id)
         REFERENCES public.armies (id)
         ON DELETE CASCADE,
+    CONSTRAINT figurines_box_id_fkey FOREIGN KEY (box_id)
+        REFERENCES public.boxes (id)
+        ON DELETE CASCADE,
+    CONSTRAINT figurines_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES public.games (id)
+        ON DELETE CASCADE,        
     CONSTRAINT figurines_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public."user" (id)
+        ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS public.objects
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+    object_name text  NOT NULL,
+    picture_path text,
+    purchase integer NOT NULL DEFAULT 0,
+    cleanMount integer NOT NULL DEFAULT 0,
+    undercoat integer NOT NULL DEFAULT 0,
+    paint integer NOT NULL DEFAULT 0,
+    plinth integer NOT NULL DEFAULT 0,
+    varnish integer NOT NULL DEFAULT 0,
+    box_id integer NOT NULL,
+    game_id integer NOT NULL,
+    user_id integer NOT NULL,
+    CONSTRAINT object_pkey PRIMARY KEY (id),
+    CONSTRAINT object_boxes_id_fkey FOREIGN KEY (box_id)
+        REFERENCES public.boxes (id)
+        ON DELETE CASCADE,
+    CONSTRAINT object_game_id_fkey FOREIGN KEY (game_id)
+        REFERENCES public.games (id)
+        ON DELETE CASCADE,
+    CONSTRAINT object_user_id_fkey FOREIGN KEY (user_id)
         REFERENCES public."user" (id)
         ON DELETE CASCADE
 );
