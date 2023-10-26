@@ -54,12 +54,12 @@ async function importUser() {
 
 const armies = jsonDataFigurines.map((item) => item[1]);
 const armiesFilter = [...new Set(armies)];
+const armiesFilterWithId = armiesFilter.map((item, index) => [item, index + 1]);
 
 // Add armies to database
 
 async function importArmies() {
     let counter = 0;
-    let allArmieswithIdAndNAme = [];
 
     for (const army of armiesFilter) {
         const sqlQuery = `
@@ -70,15 +70,11 @@ async function importArmies() {
         RETURNING id, army_name;`;
 
         const result = await client.query(sqlQuery, [army]);
-        const armyId = result.rows[0].id;
-        const armyName = result.rows[0].army_name;
-        allArmieswithIdAndNAme.push({ armyId, armyName });
+
         counter++;
     }
 
     console.log(`nb of armies imported : ${counter}`);
-
-    return allArmieswithIdAndNAme;
 }
 
 // Filter games and add to database
@@ -95,12 +91,12 @@ const allGames = [
 ];
 
 const gamesFilter = [...new Set(allGames)];
+const gameFilterWithId = gamesFilter.map((item, index) => [item, index + 1]);
 
 // Add games to database
 
 async function importGames() {
     let counter = 0;
-    let allGameWithIdAndNames = [];
 
     for (const game of gamesFilter) {
         const sqlQuery = `
@@ -112,14 +108,9 @@ async function importGames() {
 
         const result = await client.query(sqlQuery, [game]);
 
-        const gameId = result.rows[0].id;
-        const gameName = result.rows[0].game_name;
-        allGameWithIdAndNames.push({ gameId, gameName });
         counter++;
     }
     console.log(`nb of games imported : ${counter}`);
-
-    return allGameWithIdAndNames;
 }
 
 // Filter boxes and add to database
@@ -150,6 +141,7 @@ const AllBoxes = [
 ];
 
 const boxesFilter = [...new Set(AllBoxes)];
+const boxesFilterWithId = boxesFilter.map((item, index) => [item, index + 1]);
 
 const AllBoxesWithGames = [
     ...new Set(boxesWithGamesFig),
@@ -165,10 +157,9 @@ const boxesFilterWithGameId = AllBoxesWithGames.filter(
 );
 
 for (const box of boxesFilterWithGameId) {
-    box[1] = gamesFilter.indexOf(box[1]) + 1;
+    box[1] = gameFilterWithId.filter((item) => item[0] === box[1])[0][1];
 }
 
-console.log(boxesFilterWithGameId);
 // Add boxes to database
 
 async function importBoxes() {
@@ -176,14 +167,13 @@ async function importBoxes() {
 
     for (const box of boxesFilterWithGameId) {
         const sqlQuery = `
-                INSERT INTO public.boxes
-                (box_name, picture_path, game_id)
-                VALUES
+        INSERT INTO public.boxes
+        (box_name, picture_path, game_id)
+        VALUES
         ($1, 'unknown', $2)
-        RETURNING id;`;
+        RETURNING id, box_name;`;
 
         const result = await client.query(sqlQuery, [box[0], box[1]]);
-        box.id = result.rows[0].id;
         counter++;
     }
     console.log(`nb of boxes imported : ${counter}`);
@@ -200,9 +190,9 @@ const armiesWithGamesFilter = armiesWithGames.filter(
         self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
 );
 
-for (const item of armiesWithGamesFilter) {
-    item[0] = armiesFilter.indexOf(item[0]) + 1;
-    item[1] = gamesFilter.indexOf(item[1]) + 1;
+for (const army of armiesWithGamesFilter) {
+    army[0] = armiesFilterWithId.filter((item) => item[0] === army[0])[0][1];
+    army[1] = gameFilterWithId.filter((item) => item[0] === army[1])[0][1];
 }
 
 // Add armies_games to database
@@ -210,14 +200,14 @@ for (const item of armiesWithGamesFilter) {
 async function importArmiesGames() {
     let counter = 0;
 
-    for (const item of armiesWithGamesFilter) {
+    for (const army of armiesWithGamesFilter) {
         const sqlQuery = `
         INSERT INTO public.armies_games
         (army_id, game_id)
         VALUES
         ($1, $2);`;
 
-        await client.query(sqlQuery, [item[0], item[1]]);
+        await client.query(sqlQuery, [army[0], army[1]]);
         counter++;
     }
     console.log(`nb of armies_games imported : ${counter}`);
@@ -234,9 +224,9 @@ const armiesWithBoxesFilter = armiesWithBoxes.filter(
         self.findIndex((m) => m[0] === value[0] && m[1] === value[1]) === index
 );
 
-for (const item of armiesWithBoxesFilter) {
-    item[0] = armiesFilter.indexOf(item[0]) + 1;
-    item[1] = boxesFilter.indexOf(item[1]) + 1;
+for (const army of armiesWithBoxesFilter) {
+    army[0] = armiesFilterWithId.filter((item) => item[0] === army[0])[0][1];
+    army[1] = boxesFilterWithId.filter((item) => item[0] === army[1])[0][1];
 }
 
 // Add armies_boxes to database
@@ -244,14 +234,14 @@ for (const item of armiesWithBoxesFilter) {
 async function importArmiesBoxes() {
     let counter = 0;
 
-    for (const item of armiesWithBoxesFilter) {
+    for (const army of armiesWithBoxesFilter) {
         const sqlQuery = `
-        INSERT INTO public.armies_boxes
-        (army_id, box_id)
-        VALUES
-        ($1, $2);`;
+            INSERT INTO public.armies_boxes
+            (army_id, box_id)
+            VALUES
+            ($1, $2);`;
 
-        await client.query(sqlQuery, [item[0], item[1]]);
+        await client.query(sqlQuery, [army[0], army[1]]);
         counter++;
     }
     console.log(`nb of armies_boxes imported : ${counter}`);
@@ -271,10 +261,6 @@ const plinthFig = jsonDataFigurines.map((item) => item[8]);
 const varnishFig = jsonDataFigurines.map((item) => item[9]);
 const numberOfFig = jsonDataFigurines.map((item) => item[10]);
 
-const armiesId = armies.map((item) => armiesFilter.indexOf(item) + 1);
-const boxesId = boxesFig.map((item) => boxesFilter.indexOf(item) + 1);
-const gamesId = gamesFig.map((item) => gamesFilter.indexOf(item) + 1);
-
 const figurinesWithAllInfo = figurines.map((item, index) => [
     item,
 
@@ -284,22 +270,33 @@ const figurinesWithAllInfo = figurines.map((item, index) => [
     paintFig[index],
     plinthFig[index],
     varnishFig[index],
-    armiesId[index],
-    boxesId[index],
-    gamesId[index],
+    armies[index],
+    boxesFig[index],
+    gamesFig[index],
     numberOfFig[index],
 ]);
 
+for (const figurine of figurinesWithAllInfo) {
+    figurine[7] = armiesFilterWithId.filter(
+        (item) => item[0] === figurine[7]
+    )[0][1];
+    figurine[8] = boxesFilterWithId.filter(
+        (item) => item[0] === figurine[8]
+    )[0][1];
+    figurine[9] = gameFilterWithId.filter(
+        (item) => item[0] === figurine[9]
+    )[0][1];
+}
 async function importFigurines() {
     let counter = 0;
 
     for (const item of figurinesWithAllInfo) {
         for (let i = 0; i < item[10]; i++) {
             const sqlQuery = `
-        INSERT INTO public.figurines
-        (figurine_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, army_id, box_id, game_id, user_id)
-        VALUES
-        ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, $10, '1' );`;
+            INSERT INTO public.figurines
+            (figurine_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, army_id, box_id, game_id, user_id)
+            VALUES
+            ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, $10, '1' );`;
 
             await client.query(sqlQuery, [
                 item[0],
@@ -331,8 +328,6 @@ const plinthObj = jsonDataObjects.map((item) => item[8]);
 const varnishObj = jsonDataObjects.map((item) => item[9]);
 const numberOfObj = jsonDataObjects.map((item) => item[10]);
 
-const boxesFilterWithId = boxesFilter.map((item, index) => [item, index + 1]);
-
 const boxesObjFilter = [new Set(boxesObj)];
 
 const objectsWithAllInfo = objects.map((item, index) => [
@@ -355,10 +350,10 @@ async function importObjects() {
     for (const item of objectsWithAllInfo) {
         for (let i = 0; i < item[10]; i++) {
             const sqlQuery = `
-        INSERT INTO public.figurines
-        (object_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, box_id, game_id, user_id)
-        VALUES
-        ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, '1' );`;
+            INSERT INTO public.figurines
+            (object_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, box_id, game_id, user_id)
+            VALUES
+            ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, '1' );`;
 
             await client.query(sqlQuery, [
                 item[0],
