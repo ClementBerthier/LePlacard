@@ -37,7 +37,8 @@ CREATE TABLE IF NOT EXISTS public.armies
 );
 
 CREATE TABLE IF NOT EXISTS public.armies_boxes
-( army_id integer NOT NULL,
+(
+  army_id integer NOT NULL,
   box_id integer NOT NULL,
   CONSTRAINT armies_boxes_pkey PRIMARY KEY (army_id, box_id),
   CONSTRAINT armies_boxes_army_id_fkey FOREIGN KEY (army_id)
