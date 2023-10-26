@@ -290,8 +290,8 @@ for (const figurine of figurinesWithAllInfo) {
 async function importFigurines() {
     let counter = 0;
 
-    for (const item of figurinesWithAllInfo) {
-        for (let i = 0; i < item[10]; i++) {
+    for (const figurine of figurinesWithAllInfo) {
+        for (let i = 0; i < figurine[10]; i++) {
             const sqlQuery = `
             INSERT INTO public.figurines
             (figurine_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, army_id, box_id, game_id, user_id)
@@ -299,16 +299,16 @@ async function importFigurines() {
             ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, $10, '1' );`;
 
             await client.query(sqlQuery, [
-                item[0],
-                item[1],
-                item[2],
-                item[3],
-                item[4],
-                item[5],
-                item[6],
-                item[7],
-                item[8],
-                item[9],
+                figurine[0],
+                figurine[1],
+                figurine[2],
+                figurine[3],
+                figurine[4],
+                figurine[5],
+                figurine[6],
+                figurine[7],
+                figurine[8],
+                figurine[9],
             ]);
             counter++;
         }
@@ -328,8 +328,6 @@ const plinthObj = jsonDataObjects.map((item) => item[8]);
 const varnishObj = jsonDataObjects.map((item) => item[9]);
 const numberOfObj = jsonDataObjects.map((item) => item[10]);
 
-const boxesObjFilter = [new Set(boxesObj)];
-
 const objectsWithAllInfo = objects.map((item, index) => [
     item,
 
@@ -339,37 +337,101 @@ const objectsWithAllInfo = objects.map((item, index) => [
     paintObj[index],
     plinthObj[index],
     varnishObj[index],
-    //boxesFilterWithId[index],
+    boxesObj[index],
     gamesObj[index],
     numberOfObj[index],
 ]);
 
+for (const objet of objectsWithAllInfo) {
+    objet[7] = boxesFilterWithId.filter((item) => item[0] === objet[7])[0][1];
+    objet[8] = gameFilterWithId.filter((item) => item[0] === objet[8])[0][1];
+}
+
 async function importObjects() {
     let counter = 0;
 
-    for (const item of objectsWithAllInfo) {
-        for (let i = 0; i < item[10]; i++) {
+    for (const object of objectsWithAllInfo) {
+        for (let i = 0; i < object[9]; i++) {
             const sqlQuery = `
-            INSERT INTO public.figurines
+            INSERT INTO public.objects
             (object_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, box_id, game_id, user_id)
             VALUES
             ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, '1' );`;
 
             await client.query(sqlQuery, [
-                item[0],
-                item[1],
-                item[2],
-                item[3],
-                item[4],
-                item[5],
-                item[6],
-                item[7],
-                item[8],
+                object[0],
+                object[1],
+                object[2],
+                object[3],
+                object[4],
+                object[5],
+                object[6],
+                object[7],
+                object[8],
             ]);
             counter++;
         }
     }
-    console.log(`nb of figurine imported : ${counter}`);
+    console.log(`nb of object imported : ${counter}`);
+}
+
+// Filter decors and add to database
+
+const decors = jsonDataDecors.map((item) => item[0]);
+
+const purchaseDec = jsonDataDecors.map((item) => item[4]);
+const cleanMountDec = jsonDataDecors.map((item) => item[5]);
+const undercoatDec = jsonDataDecors.map((item) => item[6]);
+const paintDec = jsonDataDecors.map((item) => item[7]);
+const plinthDec = jsonDataDecors.map((item) => item[8]);
+const varnishDec = jsonDataDecors.map((item) => item[9]);
+const numberOfDec = jsonDataDecors.map((item) => item[10]);
+
+const decorsWithAllInfo = decors.map((item, index) => [
+    item,
+
+    purchaseDec[index],
+    cleanMountDec[index],
+    undercoatDec[index],
+    paintDec[index],
+    plinthDec[index],
+    varnishDec[index],
+    boxesDec[index],
+    gamesDec[index],
+    numberOfDec[index],
+]);
+
+for (const decor of decorsWithAllInfo) {
+    decor[7] = boxesFilterWithId.filter((item) => item[0] === decor[7])[0][1];
+    decor[8] = gameFilterWithId.filter((item) => item[0] === decor[8])[0][1];
+}
+
+async function importDecors() {
+    let counter = 0;
+
+    for (const decor of decorsWithAllInfo) {
+        for (let i = 0; i < decor[9]; i++) {
+            const sqlQuery = `
+            INSERT INTO public.decors
+            (decor_name, picture_path, purchase, cleanMount, undercoat, paint, plinth, varnish, box_id, game_id, user_id)
+            VALUES
+            ($1, 'unknown', $2, $3, $4, $5, $6, $7, $8, $9, '1' );`;
+
+            await client.query(sqlQuery, [
+                decor[0],
+                decor[1],
+                decor[2],
+                decor[3],
+                decor[4],
+                decor[5],
+                decor[6],
+                decor[7],
+                decor[8],
+            ]);
+            counter++;
+        }
+    }
+    console.log(`nb of decors imported : ${counter}`);
 }
 
 async function importData() {
@@ -381,6 +443,8 @@ async function importData() {
     await importArmiesGames();
     await importArmiesBoxes();
     await importFigurines();
+    await importObjects();
+    await importDecors();
 }
 
 importData();
