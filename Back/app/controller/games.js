@@ -17,7 +17,7 @@ const controller = {
     },
     async updateGame(req, res) {
         const game = req.body;
-        const gameDB = await gameModel.update(id, game);
+        const gameDB = await gameModel.update(req.params.id, game);
         res.json(gameDB);
     },
     async deleteGame(req, res) {
