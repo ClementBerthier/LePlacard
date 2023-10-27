@@ -24,7 +24,6 @@ const gameModel = {
     async insert(game) {
         let gameDB;
         try {
-            console.log("model", game);
             const sqlQuery =
                 "INSERT INTO public.games(game_name, picture_path) VALUES($1, $2) RETURNING *";
             const values = [game.game_name, game.picture_path];

@@ -1,4 +1,4 @@
-CREATE ROLE user_leplacard WITH LOGIN PASSWORD 'leplacard';
+CREATE USER user_leplacard WITH LOGIN PASSWORD 'leplacard';
 
 CREATE DATABASE "PlacardDB"
     WITH
