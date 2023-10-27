@@ -6,8 +6,8 @@ const gamesController = {
         res.json(games);
     },
     async getOneGame(req, res) {
-        const game = await gameModel.findOne(res.params.id);
-        res.json();
+        const game = await gameModel.findOne(req.params.id);
+        res.json(game);
     },
     async addGame(req, res) {
         const game = req.body;

@@ -1,25 +1,30 @@
+const client = require("./dbClient.js");
+
 const gameModel = {
     async findAll() {
+        let games;
         try {
-            let games;
-            const result = await client.query("SELECT * FROM games");
+            const result = await client.query("SELECT * FROM public.games");
             games = result.rows;
-        } catch (error) {}
+        } catch (error) {
+            console.log(error);
+        }
         return games;
     },
     async findOne(id) {
+        let game;
         try {
-            let game;
-            const sqlQuery = "SELECT * FROM games WHERE id = $1";
+            const sqlQuery = "SELECT * FROM public.games WHERE id = $1";
             const values = [id];
             const result = await client.query(sqlQuery, values);
-            game = result.rows[0];
+            game = result.rows;
         } catch (error) {}
         return game;
     },
     async insert(game) {
         let gameDB;
         try {
+            console.log("model", game);
             const sqlQuery =
                 "INSERT INTO public.games(game_name, picture_path) VALUES($1, $2) RETURNING *";
             const values = [game.game_name, game.picture_path];
