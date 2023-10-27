@@ -1,6 +1,6 @@
-import { gameModel } from "../models/gameModel.js";
+const gameModel = require("../models/games.js");
 
-const controller = {
+const gamesController = {
     async getAllGames(req, res) {
         const games = await gameModel.findAll();
         res.json(games);
@@ -27,4 +27,4 @@ const controller = {
     },
 };
 
-module.exports = controller;
+module.exports = gamesController;

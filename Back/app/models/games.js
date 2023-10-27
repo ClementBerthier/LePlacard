@@ -1,4 +1,4 @@
-const model = {
+const gameModel = {
     async findAll() {
         try {
             let games;
@@ -49,4 +49,4 @@ const model = {
     },
 };
 
-module.exports = model;
+module.exports = gameModel;

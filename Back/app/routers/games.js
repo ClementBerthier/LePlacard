@@ -1,5 +1,5 @@
-import { express } from "express";
-import { gamesController } from "../controllers";
+const express = require("express");
+const gamesController = require("../controllers/games.js");
 
 const router = express.Router();
 
@@ -12,4 +12,4 @@ router.patch("/:id", gamesController.updateGame);
 
 router.delete("/:id", gamesController.deleteGame);
 
-modules.exports = router;
+module.exports = router;
