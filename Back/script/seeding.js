@@ -451,6 +451,8 @@ async function importData() {
     await importFigurines();
     await importObjects();
     await importDecors();
+
+    console.log("Data successfully imported");
 }
 
 importData();

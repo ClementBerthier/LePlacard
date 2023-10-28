@@ -1,4 +1,13 @@
-const client = require("./dbClient.js");
+const coreModel = require("./coreModel");
+
+const gameModel = {
+    ...coreModel,
+    tableName: "games",
+};
+
+module.exports = gameModel;
+
+/* const client = require("./dbClient.js");
 
 const gameModel = {
     async findAll() {
@@ -54,3 +63,4 @@ const gameModel = {
 };
 
 module.exports = gameModel;
+ */
