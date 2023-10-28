@@ -2,7 +2,13 @@ require("dotenv").config({ path: "../.env" });
 const XLSX = require("xlsx");
 
 const { Client } = require("pg");
-const client = new Client();
+const client = new Client({
+    user: process.env.PG_USER,
+    host: process.env.HOST,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PORT,
+});
 client.connect();
 
 const workbook = XLSX.readFile("../data/BDD-LePlacard.ods");
