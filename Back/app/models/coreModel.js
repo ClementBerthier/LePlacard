@@ -3,8 +3,10 @@ const client = require("./dbClient.js");
 const coreModel = {
     async findAll(table = this.tableName) {
         let data;
+
         try {
             const sqlQuery = `SELECT * FROM public.${table}`;
+            console.log("user", sqlQuery);
             const result = await client.query(sqlQuery);
             data = result.rows;
         } catch (error) {}
@@ -47,7 +49,10 @@ const coreModel = {
         try {
             const sqlQuery = `INSERT INTO public.${table}(${queryElements}) VALUES(${valuesElement}) RETURNING *`;
             const values = elementValues.map(([item]) => item);
-            const result = await client.query(sqlQuery, values);
+            const finalValues = values.map((item) => {
+                return isNaN(Number(item)) ? item : Number(item);
+            });
+            const result = await client.query(sqlQuery, finalValues);
             data = result.rows[0];
         } catch (error) {}
         return data;
@@ -77,7 +82,10 @@ const coreModel = {
         try {
             const sqlQuery = `UPDATE public.${table} SET ${queryElements} WHERE id=${id} RETURNING *`;
             const values = elementValues.map(([item]) => item);
-            const result = await client.query(sqlQuery, values);
+            const finalValues = values.map((item) => {
+                return isNaN(Number(item)) ? item : Number(item);
+            });
+            const result = await client.query(sqlQuery, finalValues);
             data = result.rows[0];
         } catch (error) {}
         return data;

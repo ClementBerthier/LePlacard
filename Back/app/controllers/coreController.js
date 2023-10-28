@@ -1,0 +1,43 @@
+const coreController = {
+    listMethod(model, table) {
+        return {
+            async getAll(req, res) {
+                try {
+                    const data = await model.findAll(table);
+                    res.json(data);
+                } catch (error) {}
+            },
+            async getOne(req, res) {
+                try {
+                    const id = req.params.id;
+                    const data = await model.findOne(id, table);
+                    res.json(data);
+                } catch (error) {}
+            },
+            async add(req, res) {
+                try {
+                    const data = req.body;
+                    const dataDB = await model.insert(data, table);
+                    res.json(dataDB);
+                } catch (error) {}
+            },
+            async update(req, res) {
+                try {
+                    const id = req.params.id;
+                    const data = req.body;
+                    const dataDB = await model.update(id, data, table);
+                    res.json(dataDB);
+                } catch (error) {}
+            },
+            async delete(req, res) {
+                try {
+                    const id = req.params.id;
+                    const result = await model.delete(id, table);
+                    res.json(result);
+                } catch (error) {}
+            },
+        };
+    },
+};
+
+module.exports = coreController;

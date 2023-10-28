@@ -1,16 +1,15 @@
 const express = require("express");
-
 const boxesController = require("../controllers/boxes.js");
 
 const router = express.Router();
 
-router.get("/", boxesController.getAllBoxes);
-router.get("/:id", boxesController.getOneBox);
+router.get("/", boxesController.method.getAll);
+router.get("/:id", boxesController.method.getOne);
 
-router.post("/", boxesController.addBox);
+router.post("/", boxesController.method.add);
 
-router.patch("/:id", boxesController.updateBox);
+router.patch("/:id", boxesController.method.update);
 
-router.delete("/:id", boxesController.deleteBox);
+router.delete("/:id", boxesController.method.delete);
 
 module.exports = router;
