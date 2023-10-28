@@ -77,7 +77,6 @@ const coreModel = {
         try {
             const sqlQuery = `UPDATE public.${table} SET ${queryElements} WHERE id=${id} RETURNING *`;
             const values = elementValues.map(([item]) => item);
-            console.log("update", values);
             const result = await client.query(sqlQuery, values);
             data = result.rows[0];
         } catch (error) {}
