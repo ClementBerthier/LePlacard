@@ -6,7 +6,6 @@ const coreModel = {
 
         try {
             const sqlQuery = `SELECT * FROM public.${table}`;
-            console.log("user", sqlQuery);
             const result = await client.query(sqlQuery);
             data = result.rows;
         } catch (error) {}

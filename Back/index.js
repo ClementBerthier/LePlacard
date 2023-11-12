@@ -1,12 +1,14 @@
 require("dotenv").config();
 
-const gamesRouter = require("./app/routers/games.js");
-const boxesRouter = require("./app/routers/boxes.js");
-const armiesRouter = require("./app/routers/armies.js");
-const figurinesRouter = require("./app/routers/figurines.js");
-const decorsRouter = require("./app/routers/decors.js");
-const objectsRouter = require("./app/routers/objects.js");
-const usersRouter = require("./app/routers/users.js");
+const {
+    armiesRouter,
+    boxesRouter,
+    figurinesRouter,
+    decorsRouter,
+    objectsRouter,
+    usersRouter,
+    gamesRouter,
+} = require("./app/routers");
 
 const express = require("express");
 const app = express();
