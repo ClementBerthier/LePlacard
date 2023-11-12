@@ -66,7 +66,6 @@ const armiesFilterWithId = armiesFilter.map((item, index) => [item, index + 1]);
 
 async function importArmies() {
     let counter = 0;
-
     for (const army of armiesFilter) {
         const sqlQuery = `
         INSERT INTO public.armies
