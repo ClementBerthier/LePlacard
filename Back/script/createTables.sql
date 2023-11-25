@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public.games
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     game_name text  NOT NULL,
     picture_path text,
+    
     CONSTRAINT games_pkey PRIMARY KEY (id)
 );
 

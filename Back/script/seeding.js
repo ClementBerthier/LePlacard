@@ -441,7 +441,7 @@ async function importDecors() {
 
 async function importData() {
     await deleteData();
-    await importUser();
+    /* await importUser();
     await importArmies();
     await importGames();
     await importBoxes();
@@ -449,7 +449,7 @@ async function importData() {
     await importArmiesBoxes();
     await importFigurines();
     await importObjects();
-    await importDecors();
+    await importDecors(); */
 
     console.log("Data successfully imported");
 }
