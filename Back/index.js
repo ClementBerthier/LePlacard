@@ -23,8 +23,8 @@ app.use("/decors", decorsRouter);
 app.use("/objects", objectsRouter);
 app.use("/users", usersRouter);
 
-const PORT = 3000;
+const PORTLOCAL = process.env.PORTLOCAL ?? 3000;
 
-app.listen(PORT, () => {
-    console.log(`Server is running : http://localhost:${PORT}`);
+app.listen(PORTLOCAL, () => {
+    console.log(`Server is running : http://localhost:${PORTLOCAL}`);
 });
