@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS public."user"
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     identifiant text NOT NULL,
     password_user text NOT NULL,
+    is_admin boolean NOT NULL DEFAULT false,
     CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 

@@ -9,7 +9,6 @@ const usersController = {
     method: coreController.listMethod(userModel, "user"),
 
     async createUser(req, res) {
-        //TODO : check if user already exist
         const salt = 10;
 
         try {
@@ -19,7 +18,6 @@ const usersController = {
                 "SELECT identifiant FROM public.user WHERE identifiant = $1";
             const values = [user.identifiant];
             const result = await database.query(sqlQuery, values);
-            console.log(result.rows[0]);
             if (result.rows[0] === undefined) {
                 console.log("LA");
                 const passwordHash = await bcrypt.hash(
@@ -28,6 +26,7 @@ const usersController = {
                 );
                 user.password_user = passwordHash;
                 const userDB = await userModel.insert(user, "user");
+                console.log("userDB", userDB);
                 res.json(userDB);
             } else {
                 res.json(
