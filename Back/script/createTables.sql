@@ -1,14 +1,5 @@
 BEGIN;
 
-CREATE TABLE IF NOT EXISTS public.games
-(
-    id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
-    game_name text  NOT NULL,
-    picture_path text,
-    
-    CONSTRAINT games_pkey PRIMARY KEY (id)
-);
-
 CREATE TABLE IF NOT EXISTS public."user"
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
@@ -17,15 +8,32 @@ CREATE TABLE IF NOT EXISTS public."user"
     CONSTRAINT user_pkey PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS public.games
+(
+    id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+    game_name text  NOT NULL,
+    picture_path text,
+    user_id integer NOT NULL,    
+    CONSTRAINT games_pkey PRIMARY KEY (id),
+    CONSTRAINT games_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public."user" (id)
+        ON DELETE CASCADE
+);
+
+
 CREATE TABLE IF NOT EXISTS public.boxes
 (
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY ,
     box_name text  NOT NULL,
     picture_path text,
     game_id integer NOT NULL,
+    user_id integer NOT NULL,
     CONSTRAINT boxes_pkey PRIMARY KEY (id),
     CONSTRAINT boxes_game_id_fkey FOREIGN KEY (game_id)
-        REFERENCES public.games (id) 
+        REFERENCES public.games (id),
+    CONSTRAINT boxes_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public."user" (id)
+        ON DELETE CASCADE     
   
 );
 
@@ -34,7 +42,11 @@ CREATE TABLE IF NOT EXISTS public.armies
     id integer NOT NULL GENERATED ALWAYS AS IDENTITY,
     army_name text  NOT NULL,
     picture_path text,
-    CONSTRAINT armies_pkey PRIMARY KEY (id)    
+    user_id integer NOT NULL,
+    CONSTRAINT armies_pkey PRIMARY KEY (id),
+    CONSTRAINT armies_user_id_fkey FOREIGN KEY (user_id)
+        REFERENCES public."user" (id)
+        ON DELETE CASCADE    
 );
 
 CREATE TABLE IF NOT EXISTS public.armies_boxes

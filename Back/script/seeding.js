@@ -69,9 +69,9 @@ async function importArmies() {
     for (const army of armiesFilter) {
         const sqlQuery = `
         INSERT INTO public.armies
-        (army_name, picture_path)
+        (army_name, picture_path, user_id)
         VALUES
-        ($1, 'unknown')
+        ($1, 'unknown' '1')
         RETURNING id, army_name;`;
 
         const result = await client.query(sqlQuery, [army]);
@@ -106,9 +106,9 @@ async function importGames() {
     for (const game of gamesFilter) {
         const sqlQuery = `
             INSERT INTO public.games
-            (game_name, picture_path)
+            (game_name, picture_path, user_id)
             VALUES
-            ($1, 'unknown')
+            ($1, 'unknown', '1')
             RETURNING id, game_name;`;
 
         const result = await client.query(sqlQuery, [game]);
@@ -173,9 +173,9 @@ async function importBoxes() {
     for (const box of boxesFilterWithGameId) {
         const sqlQuery = `
         INSERT INTO public.boxes
-        (box_name, picture_path, game_id)
+        (box_name, picture_path, game_id, user_id)
         VALUES
-        ($1, 'unknown', $2)
+        ($1, 'unknown', $2, '1')
         RETURNING id, box_name;`;
 
         const result = await client.query(sqlQuery, [box[0], box[1]]);
