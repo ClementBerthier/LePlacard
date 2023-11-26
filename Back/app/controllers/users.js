@@ -15,10 +15,25 @@ const usersController = {
         try {
             const user = req.body;
 
-            const passwordHash = await bcrypt.hash(user.password_user, salt);
-            user.password_user = passwordHash;
-            const userDB = await userModel.insert(user, "user");
-            res.json(userDB);
+            const sqlQuery =
+                "SELECT identifiant FROM public.user WHERE identifiant = $1";
+            const values = [user.identifiant];
+            const result = await database.query(sqlQuery, values);
+            console.log(result.rows[0]);
+            if (result.rows[0] === undefined) {
+                console.log("LA");
+                const passwordHash = await bcrypt.hash(
+                    user.password_user,
+                    salt
+                );
+                user.password_user = passwordHash;
+                const userDB = await userModel.insert(user, "user");
+                res.json(userDB);
+            } else {
+                res.json(
+                    "Ce nom d'utilisateur existe déjà, veuillez en choisir un autre"
+                );
+            }
         } catch (error) {}
     },
 
@@ -45,7 +60,6 @@ const usersController = {
                 const jwtOptions = { expiresIn: "3h" };
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 result.token = token;
-                console.log("testController", result);
                 res.json(result);
             }
         } catch (error) {}
