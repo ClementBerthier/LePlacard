@@ -33,25 +33,9 @@ const jsonDataDecors = XLSX.utils.sheet_to_json(worksheetDecors, { header: 1 });
 
 async function deleteData() {
     await client.query(
-        'TRUNCATE "user", armies_boxes, armies_games, games, boxes, armies, decors, figurines, objects RESTART IDENTITY CASCADE;'
+        "TRUNCATE armies_boxes, armies_games, games, boxes, armies, decors, figurines, objects RESTART IDENTITY CASCADE;"
     );
     console.log("Data successfully deleted");
-}
-
-//Import user
-
-async function importUser() {
-    let counter = 0;
-    const sqlQuery = `
-    INSERT INTO public."user"
-    (identifiant, password_user)
-    VALUES
-    ('admin', 'admin');`;
-
-    const result = await client.query(sqlQuery);
-    counter++;
-
-    console.log(`nb of user imported : ${counter}`);
 }
 
 // Filter armies and add to database
@@ -71,7 +55,7 @@ async function importArmies() {
         INSERT INTO public.armies
         (army_name, picture_path, user_id)
         VALUES
-        ($1, 'unknown' '1')
+        ($1, 'unknown', '1')
         RETURNING id, army_name;`;
 
         const result = await client.query(sqlQuery, [army]);
@@ -441,7 +425,6 @@ async function importDecors() {
 
 async function importData() {
     await deleteData();
-    /* await importUser();
     await importArmies();
     await importGames();
     await importBoxes();
@@ -449,7 +432,7 @@ async function importData() {
     await importArmiesBoxes();
     await importFigurines();
     await importObjects();
-    await importDecors(); */
+    await importDecors();
 
     console.log("Data successfully imported");
 }

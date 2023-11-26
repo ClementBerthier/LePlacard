@@ -37,7 +37,7 @@ const usersController = {
             req.body.password_user = passwordCompare;
             const user = req.body;
             const result = await userModel.login(user);
-            if (result !== undefined) {
+            if (result != undefined) {
                 const jwtSecret = process.env.JWT_SECRET;
                 const jwtData = {
                     identifiant: result.identifiant,
@@ -45,6 +45,7 @@ const usersController = {
                 const jwtOptions = { expiresIn: "3h" };
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 result.token = token;
+                console.log("testController", result);
                 res.json(result);
             }
         } catch (error) {}
