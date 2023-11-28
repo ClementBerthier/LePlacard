@@ -11,7 +11,9 @@ const verifyToken = async (req, res, next) => {
             req.user = decoded;
             next();
         } catch (error) {
-            return res.status(401).send({ message: "Invalid Token" });
+            return res
+                .status(401)
+                .send({ message: "Authorization is required" });
         }
     } else {
         res.status(403).json("Authorization is required");

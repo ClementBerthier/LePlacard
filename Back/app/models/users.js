@@ -63,6 +63,8 @@ const userModel = {
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 loginData.token = token;
                 return loginData;
+            } else {
+                return "Identifiant ou mot de passe incorrect";
             }
         } catch (error) {}
     },
@@ -74,11 +76,8 @@ const userModel = {
             user.password_user = passwordHash;
         }
 
-        console.log("user", user);
         const attributes = Object.keys(user);
-        console.log("attributes", attributes);
         const values = Object.values(user);
-        console.log("values", values);
 
         const queryElements = attributes
             .map((key, index) => `${key} = '${values[index]}'`)
@@ -86,10 +85,17 @@ const userModel = {
 
         try {
             const sqlQuery = `UPDATE public.user SET ${queryElements} WHERE id = ${id} RETURNING *;`;
-            console.log(sqlQuery);
             const result = await client.query(sqlQuery);
-            console.log("result", result.rows[0]);
             return result.rows[0];
+        } catch (error) {}
+    },
+
+    async deleteUser(id) {
+        console.log("ok je suis ici");
+        try {
+            const sqlQuery = `DELETE FROM public.user WHERE id = ${id}`;
+            const result = await client.query(sqlQuery);
+            return result;
         } catch (error) {}
     },
 };

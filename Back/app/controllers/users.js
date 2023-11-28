@@ -28,6 +28,14 @@ const usersController = {
             res.json(result);
         } catch (error) {}
     },
+
+    async delete(req, res) {
+        try {
+            const userId = Number(req.params.id);
+            const result = await userModel.deleteUser(userId);
+            res.json(result);
+        } catch (error) {}
+    },
 };
 
 module.exports = usersController;
