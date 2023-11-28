@@ -62,6 +62,7 @@ const userModel = {
                 const jwtOptions = { expiresIn: "3h" };
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 loginData.token = token;
+                console.log(loginData);
                 return loginData;
             } else {
                 return "Identifiant ou mot de passe incorrect";
@@ -91,7 +92,6 @@ const userModel = {
     },
 
     async deleteUser(id) {
-        console.log("ok je suis ici");
         try {
             const sqlQuery = `DELETE FROM public.user WHERE id = ${id}`;
             const result = await client.query(sqlQuery);

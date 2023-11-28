@@ -1,4 +1,5 @@
 const coreController = {
+    // TODO: faire ne sorte d'envoyé l'id de l'utilisateur au model
     listMethod(model, table) {
         return {
             async getAll(req, res) {
@@ -9,7 +10,6 @@ const coreController = {
             },
             async getOne(req, res) {
                 try {
-                    const id = req.params.id;
                     const data = await model.findOne(id, table);
                     res.json(data);
                 } catch (error) {}

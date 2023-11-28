@@ -3,12 +3,14 @@ const secretKey = process.env.JWT_SECRET;
 
 const verifyToken = async (req, res, next) => {
     const bearerHeader = req.headers["authorization"];
-    if (typeof bearerHeader !== "undefined") {
+    //Todo: verifier le undefined en sting est ce normal
+    if (typeof bearerHeader !== undefined) {
         const bearer = bearerHeader.split(" ");
         const token = bearer[1];
         try {
             const decoded = await jwt.verify(token, secretKey);
             req.user = decoded;
+
             next();
         } catch (error) {
             return res

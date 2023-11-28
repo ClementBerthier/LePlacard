@@ -1,27 +1,31 @@
 const client = require("./dbClient.js");
 
+//TODO: spécifié les requete SQL avec un WHERE id est celui de l'user
+
 const coreModel = {
-    async findAll(table = this.tableName) {
+    async findAll(table) {
         let data;
+        console.log("req.user", table);
 
         try {
-            const sqlQuery = `SELECT * FROM public.${table}`;
+            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id=${id}`;
+            console.log(sqlQuery);
             const result = await client.query(sqlQuery);
             data = result.rows;
         } catch (error) {}
         return data;
     },
-    async findOne(id, table = this.tableName) {
+    async findOne(id, table) {
         let data;
         try {
-            const sqlQuery = `SELECT * FROM public.${table} WHERE id = $1`;
+            const sqlQuery = `SELECT * FROM public.${table} WHERE id = $1 AND user_id=${id}`;
             const values = [id];
             const result = await client.query(sqlQuery, values);
             data = result.rows;
         } catch (error) {}
         return data;
     },
-    async insert(elements, table = this.tableName) {
+    async insert(elements, table) {
         let data;
         const newElements = Object.keys(elements).map((key) => {
             let obj = {};
@@ -56,7 +60,7 @@ const coreModel = {
         } catch (error) {}
         return data;
     },
-    async update(id, elements, table = this.tableName) {
+    async update(id, elements, table) {
         let data;
         const newElements = Object.keys(elements).map((key) => {
             let obj = {};
@@ -79,7 +83,6 @@ const coreModel = {
             .map((key, index) => `${key}=$${index + 1}`)
             .join(", ");
         try {
-            
             const sqlQuery = `UPDATE public.${table} SET ${queryElements} WHERE id=${id} RETURNING *`;
             const values = elementValues.map(([item]) => item);
             const finalValues = values.map((item) => {
@@ -91,7 +94,7 @@ const coreModel = {
         return data;
     },
 
-    async delete(id, table = this.tableName) {
+    async delete(id, table) {
         try {
             const sqlQuery = `DELETE FROM public.${table} WHERE id=$1`;
             const values = [id];
