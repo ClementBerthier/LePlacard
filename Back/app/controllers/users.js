@@ -23,7 +23,9 @@ const usersController = {
     async modifyUser(req, res) {
         try {
             const user = req.body;
-            console.log("user", user);
+            const userId = Number(req.params.id);
+            const result = await userModel.updateUser(user, userId);
+            res.json(result);
         } catch (error) {}
     },
 };

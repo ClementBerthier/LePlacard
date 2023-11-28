@@ -8,7 +8,6 @@ const verifyToken = async (req, res, next) => {
         const token = bearer[1];
         try {
             const decoded = await jwt.verify(token, secretKey);
-            console.log("decoded", req.user);
             req.user = decoded;
             next();
         } catch (error) {

@@ -79,6 +79,7 @@ const coreModel = {
             .map((key, index) => `${key}=$${index + 1}`)
             .join(", ");
         try {
+            
             const sqlQuery = `UPDATE public.${table} SET ${queryElements} WHERE id=${id} RETURNING *`;
             const values = elementValues.map(([item]) => item);
             const finalValues = values.map((item) => {

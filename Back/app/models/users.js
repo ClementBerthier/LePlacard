@@ -59,13 +59,37 @@ const userModel = {
                 const jwtData = {
                     identifiant: loginData.identifiant,
                 };
-                console.log(result.rows[0]);
                 const jwtOptions = { expiresIn: "3h" };
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 loginData.token = token;
-                console.log(loginData);
                 return loginData;
             }
+        } catch (error) {}
+    },
+
+    async updateUser(user, id) {
+        if (user.password_user) {
+            const salt = 10;
+            const passwordHash = await bcrypt.hash(user.password_user, salt);
+            user.password_user = passwordHash;
+        }
+
+        console.log("user", user);
+        const attributes = Object.keys(user);
+        console.log("attributes", attributes);
+        const values = Object.values(user);
+        console.log("values", values);
+
+        const queryElements = attributes
+            .map((key, index) => `${key} = '${values[index]}'`)
+            .join(", ");
+
+        try {
+            const sqlQuery = `UPDATE public.user SET ${queryElements} WHERE id = ${id} RETURNING *;`;
+            console.log(sqlQuery);
+            const result = await client.query(sqlQuery);
+            console.log("result", result.rows[0]);
+            return result.rows[0];
         } catch (error) {}
     },
 };
