@@ -22,7 +22,9 @@ const coreController = {
             async add(req, res) {
                 try {
                     const data = req.body;
-                    const dataDB = await model.insert(data, table);
+                    const identifiant = req.user.identifiant;
+
+                    const dataDB = await model.insert(data, table, identifiant);
                     res.json(dataDB);
                 } catch (error) {}
             },

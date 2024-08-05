@@ -10,8 +10,14 @@ const coreModel = {
             const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
             const userResult = await client.query(userSqlQuery);
             const userId = userResult.rows[0].id;
-            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${userId}  `;
+            let sqlQuery = "";
+            if (table === "user") {
+                sqlQuery = `SELECT * FROM public.${table}`;
+            } else {
+                sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${userId}  `;
+            }
             const result = await client.query(sqlQuery);
+            console.log("test", sqlQuery);
             data = result.rows;
             console.log("data", data);
         } catch (error) {}
@@ -23,46 +29,47 @@ const coreModel = {
             const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
             const userResult = await client.query(userSqlQuery);
             const userId = userResult.rows[0].id;
-            const sqlQuery = `SELECT * FROM public.${table} WHERE id = $1 AND user_id=${userId}`;
+            if (table === "user") {
+                sqlQuery = `SELECT * FROM public.${table} WHERE id = $1`;
+            } else {
+                sqlQuery = `SELECT * FROM public.${table} WHERE id = $1 AND user_id=${userId}`;
+            }
             const values = [id];
             const result = await client.query(sqlQuery, values);
             data = result.rows;
         } catch (error) {}
         return data;
     },
-    async insert(elements, table) {
+    async insert(elements, table, identifiant) {
         let data;
-        const newElements = Object.keys(elements).map((key) => {
-            let obj = {};
-            obj[key] = elements[key];
-            return obj;
-        });
 
-        const elementKeys = [];
-        const elementValues = [];
-        let counter = 0;
+        const elementKeys = Object.keys(elements);
+        const elementValues = Object.values(elements);
 
-        for (element of newElements) {
-            elementKeys.push(Object.keys(element));
-            elementValues.push(Object.values(element));
-            counter++;
-        }
+        const valuesElement = elementKeys.map((_, i) => `$${i + 1}`).join(", ");
+        const queryElements = elementKeys.join(", ");
 
-        let valuesElement = Array.from(
-            { length: counter },
-            (_, i) => `$${i + 1}`
-        ).join(", ");
-
-        const queryElements = elementKeys.map((key) => `${key}`).join(", ");
         try {
-            const sqlQuery = `INSERT INTO public.${table}(${queryElements}) VALUES(${valuesElement}) RETURNING *`;
-            const values = elementValues.map(([item]) => item);
-            const finalValues = values.map((item) => {
+            const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
+            const userResult = await client.query(userSqlQuery);
+            const userId = userResult.rows[0].id;
+
+            let finalValues = elementValues.map((item) => {
                 return isNaN(Number(item)) ? item : Number(item);
             });
+            finalValues.push(userId);
+
+            const sqlQuery = `INSERT INTO public.${table}(${queryElements}, user_id) VALUES(${valuesElement}, $${
+                valuesElement.lastIndexOf(",") + 1
+            }  ) RETURNING *;`;
+            console.log(finalValues);
             const result = await client.query(sqlQuery, finalValues);
+
             data = result.rows[0];
-        } catch (error) {}
+        } catch (error) {
+            console.error(error);
+        }
+
         return data;
     },
     async update(id, elements, table) {
