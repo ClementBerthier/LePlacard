@@ -9,18 +9,21 @@ const coreModel = {
         try {
             const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
             const userResult = await client.query(userSqlQuery);
-            const id = userResult.rows[0].id;
-            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${id}  `;
+            const userId = userResult.rows[0].id;
+            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${userId}  `;
             const result = await client.query(sqlQuery);
             data = result.rows;
             console.log("data", data);
         } catch (error) {}
         return data;
     },
-    async findOne(id, table) {
+    async findOne(id, table, identifiant) {
         let data;
         try {
-            const sqlQuery = `SELECT * FROM public.${table} WHERE id = $1 AND user_id=${id}`;
+            const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
+            const userResult = await client.query(userSqlQuery);
+            const userId = userResult.rows[0].id;
+            const sqlQuery = `SELECT * FROM public.${table} WHERE id = $1 AND user_id=${userId}`;
             const values = [id];
             const result = await client.query(sqlQuery, values);
             data = result.rows;

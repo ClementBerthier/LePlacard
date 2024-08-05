@@ -13,6 +13,7 @@ const coreController = {
             async getOne(req, res) {
                 try {
                     const identifiant = req.user.identifiant;
+                    const id = req.params.id;
 
                     const data = await model.findOne(id, table, identifiant);
                     res.json(data);
