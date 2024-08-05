@@ -4,13 +4,17 @@ const coreController = {
         return {
             async getAll(req, res) {
                 try {
-                    const data = await model.findAll(table);
+                    const identifiant = req.user.identifiant;
+
+                    const data = await model.findAll(table, identifiant);
                     res.json(data);
                 } catch (error) {}
             },
             async getOne(req, res) {
                 try {
-                    const data = await model.findOne(id, table);
+                    const identifiant = req.user.identifiant;
+
+                    const data = await model.findOne(id, table, identifiant);
                     res.json(data);
                 } catch (error) {}
             },

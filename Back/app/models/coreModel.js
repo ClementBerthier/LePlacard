@@ -3,15 +3,17 @@ const client = require("./dbClient.js");
 //TODO: spécifié les requete SQL avec un WHERE id est celui de l'user
 
 const coreModel = {
-    async findAll(table) {
+    async findAll(table, identifiant) {
         let data;
-        console.log("req.user", table);
 
         try {
-            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id=${id}`;
-            console.log(sqlQuery);
+            const userSqlQuery = `SELECT id FROM public.user WHERE identifiant = '${identifiant}'`;
+            const userResult = await client.query(userSqlQuery);
+            const id = userResult.rows[0].id;
+            const sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${id}  `;
             const result = await client.query(sqlQuery);
             data = result.rows;
+            console.log("data", data);
         } catch (error) {}
         return data;
     },
