@@ -1,5 +1,5 @@
 require("dotenv").config();
-const verifyToken = require("./app/services/verifyJwtToken");
+//const verifyToken = require("./app/services/verifyJwtToken");
 
 const {
     armiesRouter,
@@ -12,13 +12,17 @@ const {
 } = require("./app/routers");
 
 const express = require("express");
+const cors = require("cors");
 const app = express();
+
+app.use(cors());
+app.use(express.json());
 
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/users", usersRouter);
 
-app.use(verifyToken);
+/* app.use(verifyToken); */
 
 app.use("/games", gamesRouter);
 app.use("/boxes", boxesRouter);
