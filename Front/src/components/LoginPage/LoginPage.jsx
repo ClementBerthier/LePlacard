@@ -21,10 +21,8 @@ export default function LoginPage() {
 
         try {
             const result = await api.post("users/login", formData);
-            const token = result.data.token;
-            localStorage.setItem("token", token);
 
-            console.log("resultaxios", result);
+            console.log(result);
         } catch (error) {
             console.error("error", error);
         }

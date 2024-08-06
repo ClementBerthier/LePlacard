@@ -62,12 +62,13 @@ const userModel = {
                 const jwtOptions = { expiresIn: "3h" };
                 const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
                 loginData.token = token;
-                console.log("data", loginData);
+
                 return loginData;
             } else {
                 return "Identifiant ou mot de passe incorrect";
             }
         } catch (error) {}
+        return;
     },
 
     async updateUser(user, id) {

@@ -3,8 +3,8 @@ const secretKey = process.env.JWT_SECRET;
 
 const verifyToken = async (req, res, next) => {
     const bearerHeader = req.headers["authorization"];
+    console.log("cookieJWT", req.cookies.jwt);
     if (typeof bearerHeader !== undefined) {
-        console.log(bearerHeader);
         const bearer = bearerHeader.split(" ");
         const token = bearer[1];
         try {

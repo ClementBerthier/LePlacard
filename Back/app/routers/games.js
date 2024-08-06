@@ -1,9 +1,11 @@
 const express = require("express");
+const verifyJwtToken = require("../services/verifyJwtToken.js");
+
 const gamesController = require("../controllers/games.js");
 
 const router = express.Router();
 
-router.get("/", gamesController.method.getAll);
+router.get("/", verifyJwtToken, gamesController.method.getAll);
 router.get("/:id", gamesController.method.getOne);
 
 router.post("/", gamesController.method.add);
