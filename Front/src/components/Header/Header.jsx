@@ -1,6 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
 export default function Header() {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        localStorage.removeItem("token");
+        navigate("/login");
+    };
     return (
         <div className="Header">
             <div className="header_links">
@@ -13,7 +20,7 @@ export default function Header() {
                 <a className="link" href="/management">
                     Gestion
                 </a>
-                <button className="logout" href="/logout">
+                <button className="logout" href="/logout" onClick={handleClick}>
                     Déconnexion
                 </button>
             </div>
