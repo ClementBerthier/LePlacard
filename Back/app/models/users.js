@@ -42,32 +42,37 @@ const userModel = {
             const values = [userLogin.identifiant];
 
             let userData = await client.query(sqlQuery, values);
-
-            const passwordCompare = await bcrypt.compare(
-                userLogin.password_user,
-                userData.rows[0].password_user
-            );
-
-            if (passwordCompare) {
-                const sqlQuery =
-                    "SELECT id, identifiant, is_admin FROM public.user WHERE identifiant = $1";
-                const values = [userLogin.identifiant];
-                const result = await client.query(sqlQuery, values);
-                const loginData = result.rows[0];
-
-                const jwtSecret = process.env.JWT_SECRET;
-                const jwtData = {
-                    identifiant: loginData.identifiant,
-                };
-                const jwtOptions = { expiresIn: "3h" };
-                const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
-                loginData.token = token;
-
-                return loginData;
-            } else {
+            if (userData.rows[0] === undefined) {
                 return "Identifiant ou mot de passe incorrect";
+            } else {
+                const passwordCompare = await bcrypt.compare(
+                    userLogin.password_user,
+                    userData.rows[0].password_user
+                );
+
+                if (passwordCompare) {
+                    const sqlQuery =
+                        "SELECT id, identifiant, is_admin FROM public.user WHERE identifiant = $1";
+                    const values = [userLogin.identifiant];
+                    const result = await client.query(sqlQuery, values);
+                    const loginData = result.rows[0];
+
+                    const jwtSecret = process.env.JWT_SECRET;
+                    const jwtData = {
+                        identifiant: loginData.identifiant,
+                    };
+                    const jwtOptions = { expiresIn: "3h" };
+                    const token = jwt.sign(jwtData, jwtSecret, jwtOptions);
+                    loginData.token = token;
+
+                    return loginData;
+                } else {
+                    return "Identifiant ou mot de passe incorrect";
+                }
             }
-        } catch (error) {}
+        } catch (error) {
+            return;
+        }
         return;
     },
 

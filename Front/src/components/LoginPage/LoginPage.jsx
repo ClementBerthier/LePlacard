@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import "./LoginPage.css";
 
 export default function LoginPage() {
     const [identifiant, setIdentifiant] = useState("");
     const [password, setPassword] = useState("");
+
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -22,7 +25,14 @@ export default function LoginPage() {
         try {
             const result = await api.post("users/login", formData);
 
-            console.log(result);
+            if (result.data === "Identifiant ou mot de passe incorrect") {
+                alert("Identifiant ou mot de passe incorrect");
+                return;
+            } else {
+                const token = result.data.token;
+                localStorage.setItem("token", token);
+                navigate("/home");
+            }
         } catch (error) {
             console.error("error", error);
         }
