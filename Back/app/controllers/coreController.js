@@ -1,5 +1,4 @@
 const coreController = {
-    // TODO: faire ne sorte d'envoyé l'id de l'utilisateur au model
     listMethod(model, table) {
         return {
             async getAll(req, res) {

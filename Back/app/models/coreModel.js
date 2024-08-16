@@ -17,9 +17,7 @@ const coreModel = {
                 sqlQuery = `SELECT * FROM public.${table} WHERE user_id = ${userId}  `;
             }
             const result = await client.query(sqlQuery);
-            console.log("test", sqlQuery);
             data = result.rows;
-            console.log("data", data);
         } catch (error) {}
         return data;
     },

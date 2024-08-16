@@ -1,7 +1,7 @@
 const usersController = require("../controllers/users.js");
 const coreModel = require("./coreModel");
 const client = require("./dbClient");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const userModel = {
