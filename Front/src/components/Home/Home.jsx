@@ -3,12 +3,16 @@ import Header from "../Header/Header.jsx";
 import api from "../../services/api.js";
 import "./Home.css";
 
-//TODO: regler le probleme de decalage de donnée (donné décalé d'une requette )lors de la recupération des data armies
-
 export default function Home() {
     const token = localStorage.getItem("token");
     const [allGames, setAllGames] = useState([]);
     const [armiesOfGame, setArmiesOfGame] = useState([]);
+    const [boxesByArmyAndGame, setBoxesByArmyAndGame] = useState([]);
+    let gameSelectionned = "";
+    const [selectionnedGame, setSelectionnedGame] = useState("");
+    let armySelectionned = "";
+    const [selectionnedArmy, setSelectionnedArmy] = useState("");
+    let boxSelectionned = "";
 
     async function getAllArmiesByGame(gameName) {
         try {
@@ -19,8 +23,25 @@ export default function Home() {
                 },
             });
             const listOfArmy = response.data;
-            console.log("armies of game", armiesOfGame);
             return setArmiesOfGame(listOfArmy);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    async function getBoxesbyArmyAndGame(gameName, armyName) {
+        try {
+            console.log("avant requete", gameName, armyName);
+            const response = await api.get("/boxes/boxesByArmyAndGame", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    nameofgame: gameName,
+                    nameofarmy: armyName,
+                },
+            });
+            console.log("avant listofboxe");
+            const listOfBoxes = response.data;
+            return setBoxesByArmyAndGame(listOfBoxes);
         } catch (error) {
             console.error(error);
         }
@@ -33,6 +54,7 @@ export default function Home() {
                 },
             });
             setAllGames(response.data);
+            gameSelectionned;
         } catch (error) {
             console.error(error);
         }
@@ -41,17 +63,25 @@ export default function Home() {
     useEffect(() => {
         getAllGames();
     }, []);
-    console.log(allGames);
 
     const handleChangeGames = (e) => {
-        let gameSelectionned = e.target.value;
+        gameSelectionned = e.target.value;
+        setSelectionnedGame(gameSelectionned);
         getAllArmiesByGame(gameSelectionned);
     };
 
     const handleChangeArmies = (e) => {
-        let armySelectionned = e.target.value;
-        console.log(armySelectionned);
+        armySelectionned = e.target.value;
+        setSelectionnedArmy(armySelectionned);
+        console.log("army selectionned", selectionnedArmy);
+        getBoxesbyArmyAndGame(selectionnedGame, armySelectionned);
     };
+
+    const handleChangeBoxies = (e) => {
+        boxSelectionned = e.target.value;
+        console.log("box selectionned", boxSelectionned);
+    };
+
     return (
         <>
             <Header />
@@ -96,8 +126,17 @@ export default function Home() {
                             <h2 className="list_box_title">
                                 Selection de la boite
                             </h2>
-                            <select name="" id="">
-                                <option value=""></option>
+                            <select
+                                name="allBoxesByArmyAndGame"
+                                id="allBoxesByArmyAndGame"
+                                onChange={handleChangeBoxies}
+                            >
+                                <option value="Total">Total</option>
+                                {boxesByArmyAndGame.map((box) => (
+                                    <option key={box.id} value={box.box_name}>
+                                        {box.box_name}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                     </div>

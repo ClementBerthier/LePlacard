@@ -4,6 +4,7 @@ const gameModel = require("../models/games.js");
 
 const armiesController = {
     method: coreController.listMethod(armyModel, "armies"),
+
     armiesOfGame: async (req, res) => {
         try {
             nameOfGame = req.headers.nameofgame;

@@ -4,6 +4,7 @@ const boxesController = require("../controllers/boxes.js");
 const router = express.Router();
 
 router.get("/", boxesController.method.getAll);
+router.get("/boxesByArmyAndGame", boxesController.boxesByArmyAndGame);
 router.get("/:id", boxesController.method.getOne);
 
 router.post("/", boxesController.method.add);
