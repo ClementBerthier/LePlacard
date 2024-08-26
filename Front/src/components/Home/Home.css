@@ -36,6 +36,28 @@
             }
         }
     }
+    .selector_button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        button {
+            font-size: 1.5rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .selected {
+            background-color: #007bff;
+            color: white;
+        }
+        .unselected {
+            background-color: white;
+            color: #007bff;
+            border: 1px solid #007bff;
+        }
+    }
     .detail_title {
         font-size: 3rem;
         font-weight: 500;

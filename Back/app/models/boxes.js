@@ -6,7 +6,6 @@ const boxModel = {
     tableName: "boxes",
 
     async findBoxesByArmyAndGame(gameID, armyID) {
-        console.log("dans le model", gameID, armyID);
         let data;
         try {
             const sqlQuery = `SELECT b.*

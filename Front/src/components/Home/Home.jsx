@@ -3,16 +3,27 @@ import Header from "../Header/Header.jsx";
 import api from "../../services/api.js";
 import "./Home.css";
 
+//TODO: gerer le systeme de butoon pour filtré les ok en cour et nok pour chaque section
+
 export default function Home() {
     const token = localStorage.getItem("token");
     const [allGames, setAllGames] = useState([]);
     const [armiesOfGame, setArmiesOfGame] = useState([]);
     const [boxesByArmyAndGame, setBoxesByArmyAndGame] = useState([]);
+
     let gameSelectionned = "";
     const [selectionnedGame, setSelectionnedGame] = useState("");
     let armySelectionned = "";
     const [selectionnedArmy, setSelectionnedArmy] = useState("");
     let boxSelectionned = "";
+
+    const [totalOfFigurines, setTotalOfFigurines] = useState([]);
+
+    const totalPurchase = totalOfFigurines.filter(
+        (figurine) => figurine.purchase === 2
+    ).length;
+
+    console.log("totalOfFigurines", totalOfFigurines);
 
     async function getAllArmiesByGame(gameName) {
         try {
@@ -60,8 +71,22 @@ export default function Home() {
         }
     }
 
+    async function getTotalOfFigurines() {
+        try {
+            const response = await api.get("/figurines", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setTotalOfFigurines(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         getAllGames();
+        getTotalOfFigurines();
     }, []);
 
     const handleChangeGames = (e) => {
@@ -144,9 +169,14 @@ export default function Home() {
                 <h2 className="detail_title">Détails</h2>
                 <div className="total_section_container">
                     <h2 className="total_title">Total toutes figurines</h2>
+                    <div className="selector_button">
+                        <button>Terminé</button>
+                        <button>En cours</button>
+                        <button>A Faire</button>
+                    </div>
                     <div className="total_section">
                         <ul>
-                            <li>Achat: </li>
+                            <li>Achat: {totalPurchase}</li>
                             <li>Nettoyage/Montage:</li>
                             <li>Sous-couche:</li>
                             <li>Peinture:</li>
@@ -158,6 +188,11 @@ export default function Home() {
                 <div className="section">
                     <div className="total_jeu_section_container">
                         <h2 className="total_jeu_title">Total de: JEU</h2>
+                        <div className="selector_button">
+                            <button>Terminé</button>
+                            <button>En cours</button>
+                            <button>A Faire</button>
+                        </div>
                         <div className="total_jeu_section">
                             <ul>
                                 <li>Achat: </li>
@@ -171,6 +206,11 @@ export default function Home() {
                     </div>
                     <div className="army_section_container">
                         <h2 className="army_title">Armées de: JEU </h2>
+                        <div className="selector_button">
+                            <button>Terminé</button>
+                            <button>En cours</button>
+                            <button>A Faire</button>
+                        </div>
                         <div className="army_section">
                             <ul>
                                 <li>Achat: </li>
@@ -186,7 +226,11 @@ export default function Home() {
                         <h2 className="object_title">
                             Objets contenu dans: JEU{" "}
                         </h2>
-
+                        <div className="selector_button">
+                            <button>Terminé</button>
+                            <button>En cours</button>
+                            <button>A Faire</button>
+                        </div>
                         <div className="object_section">
                             <ul>
                                 <li>Achat: </li>
@@ -202,7 +246,11 @@ export default function Home() {
                         <h2 className="figurine_title">
                             Figurines contenu dans: JEU{" "}
                         </h2>
-
+                        <div className="selector_button">
+                            <button>Terminé</button>
+                            <button>En cours</button>
+                            <button>A Faire</button>
+                        </div>
                         <div className="figurine_section">
                             <ul>
                                 <li>Achat: </li>
